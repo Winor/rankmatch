@@ -1,0 +1,11 @@
+{
+  "name": "rankmatch",
+  "version": "0.1.0",
+  "description": "overwatch matchmaking for scrims",
+  "main": "index.js",
+  "scripts": {
+    "debug": "node index.js"
+  },
+  "author": "Winor",
+  "license": "ISC"
+}

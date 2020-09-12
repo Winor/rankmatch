@@ -29,7 +29,7 @@
                 </svg>
                 <el-form-item label-width="0" inline="true" prop="tankSR">
                   <!-- <el-input class="rank-input" placeholder="Tank Rank" v-model="ruleForm.tankSR"></el-input> -->
-                  <el-input-number  class="rank-input" size="small" v-model="ruleForm.tankSR" @change="handleChange" :min="1" :max="4000"></el-input-number>
+                  <el-input-number  class="rank-input" size="small" v-model="ruleForm.tankSR"  :min="1" :max="4000"></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="tank">
                   <el-checkbox v-model="ruleForm.tank"></el-checkbox>
@@ -72,7 +72,7 @@
                     placeholder="Damage Rank"
                     v-model="ruleForm.damageSR"
                   ></el-input> -->
-                  <el-input-number class="rank-input" size="small" v-model="ruleForm.damageSR" @change="handleChange" :min="1" :max="4000"></el-input-number>
+                  <el-input-number class="rank-input" size="small" v-model="ruleForm.damageSR"  :min="1" :max="4000"></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="damage">
                   <el-checkbox v-model="ruleForm.damage"></el-checkbox>
@@ -103,7 +103,7 @@
                     placeholder="Support Rank"
                     v-model="ruleForm.supportSR"
                   ></el-input> -->
-                  <el-input-number class="rank-input" size="small" v-model="ruleForm.supportSR" @change="handleChange" :min="1" :max="4000"></el-input-number>
+                  <el-input-number class="rank-input" size="small" v-model="ruleForm.supportSR"  :min="1" :max="4000"></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="support">
                   <el-checkbox v-model="ruleForm.support"></el-checkbox>
@@ -122,8 +122,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import api from "../api";
-
+import {db, auth} from "../firebase";
+   
 @Component
 export default class PlayerName extends Vue {
   @Prop() private msg!: string;
@@ -168,7 +168,7 @@ export default class PlayerName extends Vue {
 
   private rules = {
     name: [
-      { required: true, message: "Please input player name", trigger: "blur" },
+      { required: false, message: "Please input player name", trigger: "blur" },
       { min: 3, max: 12, message: "Length should be 3 to 12", trigger: "blur" },
     ],
     tankSR: [{ validator: this.checkSR, trigger: "blur" }],
@@ -188,8 +188,16 @@ export default class PlayerName extends Vue {
         localStorage.tankSR = this.ruleForm.tankSR;
         localStorage.damageSR = this.ruleForm.damageSR;
         localStorage.supportSR = this.ruleForm.supportSR;
-        api.create(this.ruleForm)
-        console.log(typeof this.ruleForm.tankSR)
+        auth.onAuthStateChanged(async user => {
+           if (user) {
+             try {
+               await db.collection('players').doc(user.uid).set(this.ruleForm);
+               console.log('ok')
+             } catch(error) {
+               console.log(error)
+             }
+           }
+            });
       }
     });
   }
@@ -198,6 +206,9 @@ export default class PlayerName extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.form {
+  padding-top: 5%;
+}
 .text {
   font-size: 14px;
 }

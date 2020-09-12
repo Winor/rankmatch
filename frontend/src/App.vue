@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <RankForm msg />
+    <router-view></router-view>
   </div>
 </template>
 

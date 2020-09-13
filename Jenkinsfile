@@ -5,7 +5,6 @@ pipeline {
       agent any
       steps {
         nodejs('nodejs') {
-          sh 'cd frontend/'
           sh 'npm install --dev'
           sh 'npm run build'
         }
@@ -15,7 +14,7 @@ pipeline {
 
     stage('pack') {
       steps {
-        sh 'tar -czvf release.tar.gz /src'
+        sh 'tar -czvf release.tar.gz dist'
         archiveArtifacts 'release.tar.gz'
       }
     }

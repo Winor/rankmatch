@@ -2,12 +2,7 @@ pipeline {
   agent any
   stages {
     stage('install & build') {
-      agent {
-        node {
-          label 'nodejs'
-        }
-
-      }
+      agent any
       steps {
         nodejs('nodejs') {
           sh 'cd frontend/'

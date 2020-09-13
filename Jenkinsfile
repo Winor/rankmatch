@@ -13,5 +13,12 @@ pipeline {
       }
     }
 
+    stage('pack') {
+      steps {
+        sh 'tar -czvf release.tar.gz /src'
+        archiveArtifacts 'release.tar.gz'
+      }
+    }
+
   }
 }

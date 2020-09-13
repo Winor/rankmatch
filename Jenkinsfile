@@ -9,11 +9,6 @@ pipeline {
           sh 'npm run build'
         }
 
-      }
-    }
-
-    stage('pack') {
-      steps {
         sh 'tar -czvf release.tar.gz dist'
         archiveArtifacts 'release.tar.gz'
       }

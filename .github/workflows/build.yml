@@ -30,13 +30,8 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Archive Release
-        uses: TheDoctor0/zip-release@0.4.1
-        with:
-          path: dist/ 
-          
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.4
         with:
           name: release
-          path: release.zip
+          path: dist/

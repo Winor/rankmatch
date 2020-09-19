@@ -5,13 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import {authUI}  from "../firebase";
 import "firebaseui/dist/firebaseui.css";
 
 @Component
 export default class PlayerName extends Vue {
-  @Prop() private msg!: string;
   mounted() {
         authUI();
     }

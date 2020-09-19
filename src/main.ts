@@ -2,13 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
-import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import { auth } from "./firebase";
 
 Vue.config.productionTip = false
 Vue.use(Element)
-Vue.use(Vuex)
 Vue.use(VueRouter)
 
 import RankForm from "./components/RankForm.vue";
@@ -40,14 +38,8 @@ router.beforeEach((to, from, next) => {
   })
 })
 
-const store = new Vuex.Store({
-  state: {},
-  mutations: {},
-  actions: {}
-})
 
 new Vue({
   router,
-  store,
   render: h => h(App),
 }).$mount('#app')

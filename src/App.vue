@@ -23,6 +23,7 @@ body {
   background-color: #f6e9f0;
   background-image: url(https://static.playoverwatch.com/img/crystal-candy-bg-top-e64823cff8.jpg);
   background-repeat: no-repeat;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 .el-row {
   margin-bottom: 20px;

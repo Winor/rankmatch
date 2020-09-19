@@ -1,21 +1,31 @@
 <template>
-  <div class="form">
+  <div class="form" v-loading.fullscreen.lock="fullscreenLoading">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px">
-      <el-row type="flex" justify="center">
-        <el-card class="name-card">
-          <el-form-item label-width="0" inline="true" prop="name">
-            <el-input placeholder="Player Name" v-model="ruleForm.name"></el-input>
-          </el-form-item>
-        </el-card>
+      <el-row type="flex" class="row-bg" justify="center">
+        <el-row :gutter="20" type="flex" class="row-bg" justify="space-between">
+          <el-col>
+            <el-card class="name-card">
+              <el-form-item label-width="0" inline="true" prop="callSign">
+                <el-input placeholder="callSign" v-model="ruleForm.callSign"></el-input>
+              </el-form-item>
+            </el-card>
+          </el-col>
+          <el-col>
+            <el-card class="name-card">
+              <el-form-item label-width="0" inline="true" prop="battleTag">
+                <el-input placeholder="battle#tag" v-model="ruleForm.battleTag"></el-input>
+              </el-form-item>
+            </el-card>
+          </el-col>
+        </el-row>
       </el-row>
-
       <el-row type="flex" class="row-bg" justify="center">
         <el-row :gutter="20" type="flex" class="row-bg" justify="space-between">
           <el-col>
             <div class="grid-content bg-purple">
-              <el-card class="box-card" v-bind:class="{ active: ruleForm.tank }">
+              <el-card class="box-card" v-bind:class="{ active: ruleForm.canPlay.tank }">
                 <svg
-                  @click="ruleForm.tank = !ruleForm.tank"
+                  @click="ruleForm.canPlay.tank = !ruleForm.canPlay.tank"
                   class="icon"
                   viewBox="0 0 32 32"
                   role="presentation"
@@ -27,21 +37,26 @@
                     c3.1,0,7.7,1.1,9.4,1.6c1.3,0.4,2.7,0.9,2.9,2.2C29,4.9,28.9,6,29,7.1C29,8.3,29,9.5,29,10.7C29,10.7,29,10.7,29,10.7z"
                   />
                 </svg>
-                <el-form-item label-width="0" inline="true" prop="tankSR">
-                  <!-- <el-input class="rank-input" placeholder="Tank Rank" v-model="ruleForm.tankSR"></el-input> -->
-                  <el-input-number  class="rank-input" size="small" v-model="ruleForm.tankSR"  :min="1" :max="4000"></el-input-number>
+                <el-form-item label-width="0" inline="true" prop="SR.tank">
+                  <el-input-number
+                    class="rank-input"
+                    size="small"
+                    v-model="ruleForm.SR.tank"
+                    :min="1"
+                    :max="4000"
+                  ></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="tank">
-                  <el-checkbox v-model="ruleForm.tank"></el-checkbox>
+                  <el-checkbox v-model="ruleForm.canPlay.tank"></el-checkbox>
                 </el-form-item>
               </el-card>
             </div>
           </el-col>
           <el-col>
             <div class="grid-content bg-purple-light">
-              <el-card class="box-card" v-bind:class="{ active: ruleForm.damage }">
+              <el-card class="box-card" v-bind:class="{ active: ruleForm.canPlay.damage }">
                 <svg
-                  @click="ruleForm.damage = !ruleForm.damage"
+                  @click="ruleForm.canPlay.damage = !ruleForm.canPlay.damage"
                   class="icon"
                   viewBox="0 0 32 32"
                   role="presentation"
@@ -66,25 +81,26 @@
                     />
                   </g>
                 </svg>
-                <el-form-item label-width="0" inline="true" prop="damageSR">
-                  <!-- <el-input
+                <el-form-item label-width="0" inline="true" prop="SR.damage">
+                  <el-input-number
                     class="rank-input"
-                    placeholder="Damage Rank"
-                    v-model="ruleForm.damageSR"
-                  ></el-input> -->
-                  <el-input-number class="rank-input" size="small" v-model="ruleForm.damageSR"  :min="1" :max="4000"></el-input-number>
+                    size="small"
+                    v-model="ruleForm.SR.damage"
+                    :min="1"
+                    :max="5000"
+                  ></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="damage">
-                  <el-checkbox v-model="ruleForm.damage"></el-checkbox>
+                  <el-checkbox v-model="ruleForm.canPlay.damage"></el-checkbox>
                 </el-form-item>
               </el-card>
             </div>
           </el-col>
           <el-col>
             <div class="grid-content bg-purple">
-              <el-card class="box-card" v-bind:class="{ active: ruleForm.support }">
+              <el-card class="box-card" v-bind:class="{ active: ruleForm.canPlay.support }">
                 <svg
-                  @click="ruleForm.support = !ruleForm.support"
+                  @click="ruleForm.canPlay.support = !ruleForm.canPlay.support"
                   class="icon"
                   viewBox="0 0 32 32"
                   role="presentation"
@@ -97,16 +113,17 @@
 		c1.5,0,2.7-1.2,2.7-2.7v-6.3C32,11.4,30.8,10.2,29.3,10.2z"
                   />
                 </svg>
-                <el-form-item label-width="0" inline="true" prop="supportSR">
-                  <!-- <el-input
+                <el-form-item label-width="0" inline="true" prop="SR.support">
+                  <el-input-number
                     class="rank-input"
-                    placeholder="Support Rank"
-                    v-model="ruleForm.supportSR"
-                  ></el-input> -->
-                  <el-input-number class="rank-input" size="small" v-model="ruleForm.supportSR"  :min="1" :max="4000"></el-input-number>
+                    size="small"
+                    v-model="ruleForm.SR.support"
+                    :min="1"
+                    :max="4000"
+                  ></el-input-number>
                 </el-form-item>
                 <el-form-item inline-message="true" label-width="0" prop="support">
-                  <el-checkbox v-model="ruleForm.support"></el-checkbox>
+                  <el-checkbox v-model="ruleForm.canPlay.support"></el-checkbox>
                 </el-form-item>
               </el-card>
             </div>
@@ -114,7 +131,19 @@
         </el-row>
       </el-row>
       <el-row type="flex" class="row-bg" justify="center">
-        <el-button type="warning" @click="submitForm('ruleForm')">Ready</el-button>
+        <el-card class="prefferedRole">
+          <el-form-item inline-message="true" label label-width="auto" prop="prefferedRole">
+            <el-select v-model="ruleForm.prefferedRole" placeholder=" Select Preffered Role">
+              <el-option label="None" value="none"></el-option>
+              <el-option label="Tank" value="tank"></el-option>
+              <el-option label="Damage" value="damage"></el-option>
+              <el-option label="Support" value="support"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-card>
+      </el-row>
+      <el-row type="flex" class="row-bg" justify="center">
+        <el-button class="ready-btn" type="warning" @click="submitForm('ruleForm')">Ready</el-button>
       </el-row>
     </el-form>
   </div>
@@ -122,19 +151,41 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import {db, auth} from "../firebase";
-   
+import { db, auth } from "../firebase";
+
+interface Form {
+  callSign: string;
+  battleTag: string;
+  canPlay: {
+    tank: boolean;
+    damage: boolean;
+    support: boolean;
+  };
+  SR: {
+    tank: number;
+    damage: number;
+    support: number;
+  };
+  prefferedRole: string;
+}
+
 @Component
-export default class PlayerName extends Vue {
+export default class RankForm extends Vue {
   @Prop() private msg!: string;
+
+  private fullscreenLoading = true;
 
   checkSR = (rule: string, value: number) => {
     return new Promise((resolve, reject) => {
+      console.log(value);
       if (!value) {
         return reject("Required");
       }
       if (isNaN(value)) {
         return reject("rank must use numbers");
+      }
+      if (value < 100) {
+        return reject("Invalid SR");
       }
       if (value > 5000) {
         return reject("Invalid SR");
@@ -143,12 +194,31 @@ export default class PlayerName extends Vue {
     });
   };
 
+  checkBattleTag = (rule: string, value: string) => {
+    return new Promise((resolve, reject) => {
+      console.log(value);
+      if (!value) {
+        return reject("Required");
+      }
+      if (typeof value !== "string") {
+        return reject("BattleTag must be string");
+      }
+      if (!value.includes("#")) {
+        return reject("Invalid BattleTag");
+      }
+      if (value.length < 5) {
+        return reject("Invalid BattleTag");
+      }
+      resolve();
+    });
+  };
+
   checkRole = () => {
     return new Promise((resolve, reject) => {
       if (
-        !this.ruleForm.tank &&
-        !this.ruleForm.damage &&
-        !this.ruleForm.support
+        !this.ruleForm.canPlay.tank &&
+        !this.ruleForm.canPlay.damage &&
+        !this.ruleForm.canPlay.support
       ) {
         return reject("Please select at lest one role");
       }
@@ -156,48 +226,128 @@ export default class PlayerName extends Vue {
     });
   };
 
-  private ruleForm = {
-    name: localStorage.name ? localStorage.name : "",
-    tankSR: localStorage.tankSR ? localStorage.tankSR : null,
-    damageSR: localStorage.damageSR ? localStorage.damageSR : null,
-    supportSR: localStorage.supportSR ? localStorage.supportSR : null,
-    tank: false,
-    damage: false,
-    support: false,
+  checkPreffered = (rule: string, value: string) => {
+    return new Promise((resolve, reject) => {
+      switch (value) {
+        case "tank":
+          if (this.ruleForm.canPlay.tank) {
+            return resolve();
+          }
+          return reject("tank is not selected");
+
+        case "damage":
+          if (this.ruleForm.canPlay.damage) {
+            return resolve();
+          }
+          return reject("damage is not selected");
+
+        case "support":
+          if (this.ruleForm.canPlay.support) {
+            return resolve();
+          }
+          return reject("support is not selected");
+
+        case "":
+          this.ruleForm.prefferedRole = "none";
+          return resolve();
+
+        default:
+          resolve();
+          break;
+      }
+      resolve();
+    });
+  };
+
+  created() {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const docRef = db.collection("players").doc(user.uid);
+        docRef
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data) {
+                this.ruleForm.callSign = data.callSign;
+                (this.ruleForm.battleTag = data.battleTag),
+                  (this.ruleForm.SR = data.SR),
+                  (this.ruleForm.prefferedRole = data.prefferedRole);
+                this.fullscreenLoading = false;
+              }
+            } else {
+              this.fullscreenLoading = false;
+            }
+          })
+          .catch((error) => {
+            this.alart(error, "Error", "close", false);
+          });
+      }
+    });
+  }
+
+  private ruleForm: Form = {
+    callSign: "",
+    battleTag: "",
+    SR: {
+      tank: 0,
+      damage: 0,
+      support: 0,
+    },
+    canPlay: {
+      tank: false,
+      damage: false,
+      support: false,
+    },
+    prefferedRole: "",
   };
 
   private rules = {
-    name: [
-      { required: false, message: "Please input player name", trigger: "blur" },
+    callSign: [
+      { required: true, message: "Please input callSign", trigger: "blur" },
       { min: 3, max: 12, message: "Length should be 3 to 12", trigger: "blur" },
     ],
-    tankSR: [{ validator: this.checkSR, trigger: "blur" }],
-    damageSR: [{ validator: this.checkSR, trigger: "blur" }],
-    supportSR: [{ validator: this.checkSR, trigger: "blur" }],
+    battleTag: [{ validator: this.checkBattleTag, trigger: "blur" }],
+    "SR.tank": [{ validator: this.checkSR, trigger: "blur" }],
+    "SR.damage": [{ validator: this.checkSR, trigger: "blur" }],
+    "SR.support": [{ validator: this.checkSR, trigger: "blur" }],
     tank: [{ validator: this.checkRole, trigger: "blur" }],
     damage: [{ validator: this.checkRole, trigger: "blur" }],
     support: [{ validator: this.checkRole, trigger: "blur" }],
+    prefferedRole: [{ validator: this.checkPreffered, trigger: "blur" }],
   };
+
+  alart(msg: string, title: string, confirm: string, showConfirm: boolean) {
+    this.$alert(msg, title, {
+      confirmButtonText: confirm,
+      showClose: false,
+      showConfirmButton: showConfirm,
+    });
+  }
 
   submitForm(formName: string) {
     (this.$refs[formName] as Vue & {
       validate: (cb: (valid: boolean) => void) => void;
     }).validate((valid: boolean) => {
       if (valid) {
-        localStorage.name = this.ruleForm.name;
-        localStorage.tankSR = this.ruleForm.tankSR;
-        localStorage.damageSR = this.ruleForm.damageSR;
-        localStorage.supportSR = this.ruleForm.supportSR;
-        auth.onAuthStateChanged(async user => {
-           if (user) {
-             try {
-               await db.collection('players').doc(user.uid).set(this.ruleForm);
-               console.log('ok')
-             } catch(error) {
-               console.log(error)
-             }
-           }
-            });
+        auth.onAuthStateChanged(async (user) => {
+          this.fullscreenLoading = true;
+          if (user) {
+            try {
+              await db.collection("players").doc(user.uid).set(this.ruleForm);
+              this.fullscreenLoading = false;
+              this.alart(
+                "We got you, you can now close this page",
+                "Thank You !",
+                "Update again",
+                true
+              );
+            } catch (error) {
+              this.fullscreenLoading = false;
+              this.alart(error, "Error", "Retry", true);
+            }
+          }
+        });
       }
     });
   }
@@ -206,9 +356,6 @@ export default class PlayerName extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.form {
-  padding-top: 5%;
-}
 .text {
   font-size: 14px;
 }
@@ -218,7 +365,7 @@ export default class PlayerName extends Vue {
 }
 
 .name-card {
-  width: 480px;
+  width: 310px;
   height: 80px;
 }
 
@@ -239,8 +386,20 @@ export default class PlayerName extends Vue {
   background-color: white !important;
 }
 
+.prefferedRole {
+  height: 82px;
+}
+
+.ready-btn {
+  font-size: 20px;
+  height: 60px;
+  width: 200px;
+  margin-top: 20px;
+}
+
 svg {
   margin: 10px;
+  cursor: pointer;
   fill: #1a325e;
 }
 </style>
